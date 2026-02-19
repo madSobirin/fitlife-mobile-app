@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:convert';
 import 'package:fitlife/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +20,6 @@ class _HomeState extends State<Home> {
     });
   }
 
-  /// ====== BODY CONTROLLER ======
   Widget _getBody() {
     switch (_selectedIndex) {
       case 0:
@@ -40,12 +37,10 @@ class _HomeState extends State<Home> {
     }
   }
 
-  /// ====== HOME CONTENT ======
   Widget _buildHomeContent() {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // HERO SECTION
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),

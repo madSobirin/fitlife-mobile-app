@@ -1,6 +1,7 @@
 import 'package:fitlife/pages/dashboard/home.dart';
 import 'package:flutter/material.dart';
 import 'pages/auth/login.dart';
+import 'pages/auth/register.dart';
 import 'pages/dashboard/profile.dart';
 
 void main() {
@@ -18,7 +19,8 @@ class FitLifeApp extends StatelessWidget {
       initialRoute: '/login',
 
       routes: {
-        '/login': (context) => LoginScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
         '/home': (context) => Home(),
         '/profile': (context) => const ProfilePage(),
       },
