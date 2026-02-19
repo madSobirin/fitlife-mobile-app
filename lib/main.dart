@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'pages/auth/login.dart';
 import 'pages/auth/register.dart';
 import 'pages/dashboard/profile.dart';
+import 'pages/splash/onboarding.dart';
 
 void main() {
   runApp(const FitLifeApp());
@@ -16,9 +17,10 @@ class FitLifeApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'FitLife.id',
-      initialRoute: '/login',
+      initialRoute: '/splash',
 
       routes: {
+        '/splash': (context) => const OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => Home(),
