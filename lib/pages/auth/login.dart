@@ -452,16 +452,16 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(width: 16),
-        Expanded(
-          child: _buildSocialButton(
-            icon: const Icon(
-              Icons.apple_rounded,
-              size: 22,
-              color: Color(0xFF111827),
-            ),
-            label: 'Apple',
-          ),
-        ),
+        // Expanded(
+        //   child: _buildSocialButton(
+        //     icon: const Icon(
+        //       Icons.apple_rounded,
+        //       size: 22,
+        //       color: Color(0xFF111827),
+        //     ),
+        //     label: 'Apple',
+        //   ),
+        // ),
       ],
     );
   }

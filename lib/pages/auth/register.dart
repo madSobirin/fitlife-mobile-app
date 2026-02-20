@@ -784,16 +784,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         const SizedBox(width: 16),
-        Expanded(
-          child: _buildSocialButton(
-            icon: const Icon(
-              Icons.apple_rounded,
-              size: 22,
-              color: Color(0xFF111827),
-            ),
-            label: 'Apple',
-          ),
-        ),
+        // Expanded(
+        //   child: _buildSocialButton(
+        //     icon: const Icon(
+        //       Icons.apple_rounded,
+        //       size: 22,
+        //       color: Color(0xFF111827),
+        //     ),
+        //     label: 'Apple',
+        //   ),
+        // ),
       ],
     );
   }
@@ -858,44 +858,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Column(
         children: [
           // Badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFDCFCE7),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.bolt_rounded,
-                  size: 14,
-                  color: Color(0xFF15803D),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'NEXT GEN PERFORMANCE',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF15803D),
-                    letterSpacing: 1.2,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Design your body.\nDefy your limits.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.manrope(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: const Color(0xFF111827),
-              height: 1.4,
-            ),
-          ),
+          // Container(
+          //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          //   decoration: BoxDecoration(
+          //     color: const Color(0xFFDCFCE7),
+          //     borderRadius: BorderRadius.circular(20),
+          //   ),
+          // child: Row(
+          //   mainAxisSize: MainAxisSize.min,
+          //   children: [
+          //     const Icon(
+          //       Icons.bolt_rounded,
+          //       size: 14,
+          //       color: Color(0xFF15803D),
+          //     ),
+          //     const SizedBox(width: 4),
+          //     Text(
+          //       'NEXT GEN PERFORMANCE',
+          //       style: GoogleFonts.inter(
+          //         fontSize: 11,
+          //         fontWeight: FontWeight.w700,
+          //         color: const Color(0xFF15803D),
+          //         letterSpacing: 1.2,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // ),
+          // const SizedBox(height: 12),
+          // Text(
+          //   'Design your body.\nDefy your limits.',
+          //   textAlign: TextAlign.center,
+          //   style: GoogleFonts.manrope(
+          //     fontSize: 18,
+          //     fontWeight: FontWeight.w800,
+          //     color: const Color(0xFF111827),
+          //     height: 1.4,
+          //   ),
+          // ),
         ],
       ),
     );
