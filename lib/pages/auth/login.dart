@@ -1,8 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:fitlife/services/auth_services.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -430,38 +429,15 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Expanded(
           child: _buildSocialButton(
-            icon: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: const Color(0xFF4285F4),
-              ),
-              child: const Center(
-                child: Text(
-                  'G',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
+            icon: SvgPicture.asset(
+              'assets/icons/google.svg',
+              width: 22,
+              height: 22,
             ),
             label: 'Google',
           ),
         ),
         const SizedBox(width: 16),
-        // Expanded(
-        //   child: _buildSocialButton(
-        //     icon: const Icon(
-        //       Icons.apple_rounded,
-        //       size: 22,
-        //       color: Color(0xFF111827),
-        //     ),
-        //     label: 'Apple',
-        //   ),
-        // ),
       ],
     );
   }
