@@ -15,9 +15,7 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
   }
 
   Widget _getBody() {
@@ -37,98 +35,116 @@ class _HomeState extends State<Home> {
     }
   }
 
+  // ================= HOME CONTENT =================
+
   Widget _buildHomeContent() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF1AB673), Color(0xFF0E8F5A)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+    return ListView(
+      children: [
+        // HERO SECTION
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1AB673), Color(0xFF0E8F5A)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: const BorderRadius.vertical(
+              bottom: Radius.circular(40),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Hi, Welcome Back !",
+                style: GoogleFonts.poppins(fontSize: 14, color: Colors.white70),
               ),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  'Selamat Datang di FitLife.id',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
+              const SizedBox(height: 8),
+              Text(
+                "FitLife.id",
+                style: GoogleFonts.poppins(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Platform manajemen diet dan pola makan digital untuk hidup lebih sehat dan bahagia',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(color: Colors.white70),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Track your health journey in a smarter way.",
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.white.withOpacity(0.9),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 40),
+        ),
 
-          Text(
-            'Fitur Unggulan',
-            style: GoogleFonts.poppins(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Dapatkan semua yang anda butuhkan untuk mencapai tujuan kesehatan anda',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(color: Colors.black54),
-          ),
-          const SizedBox(height: 30),
+        const SizedBox(height: 30),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Wrap(
-              spacing: 25,
-              runSpacing: 25,
-              alignment: WrapAlignment.center,
-              children: [
-                _buildFeatureCard(
-                  Icons.calculate,
-                  'Kalkulator BMI',
-                  'Hitung indeks massa tubuh anda dan dapatkan rekomendasi berat badan ideal',
-                  iconColor: Colors.orange,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              // FITUR
+              Text(
+                'Fitur Unggulan',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                _buildFeatureCard(
-                  Icons.restaurant_menu,
-                  'Menu Sehat',
-                  'Temukan berbagai pilihan menu makanan sehat untuk diet anda',
-                  iconColor: Colors.pink,
-                ),
-                _buildFeatureCard(
-                  Icons.article,
-                  'Artikel',
-                  'Baca artikel dan tips seputar diet serta pola hidup sehat',
-                  iconColor: Colors.blue,
-                ),
-                _buildFeatureCard(
-                  Icons.person,
-                  'Profil',
-                  'Kelola informasi pribadi dan pantau perkembangan kesehatan anda',
-                  iconColor: Colors.purple,
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Dapatkan semua yang anda butuhkan untuk mencapai tujuan kesehatan anda',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(color: Colors.black54, fontSize: 13),
+              ),
+              const SizedBox(height: 20),
+
+              _buildFeatureCard(
+                Icons.calculate,
+                'Kalkulator BMI',
+                'Hitung indeks massa tubuh anda.',
+                iconColor: Colors.orange,
+              ),
+              const SizedBox(height: 16),
+
+              _buildFeatureCard(
+                Icons.restaurant_menu,
+                'Menu Sehat',
+                'Temukan berbagai pilihan menu sehat.',
+                iconColor: Colors.pink,
+              ),
+              const SizedBox(height: 16),
+
+              _buildFeatureCard(
+                Icons.article,
+                'Artikel',
+                'Baca artikel dan tips diet sehat.',
+                iconColor: Colors.blue,
+              ),
+              const SizedBox(height: 16),
+
+              _buildFeatureCard(
+                Icons.person,
+                'Profil',
+                'Kelola informasi pribadi anda.',
+                iconColor: Colors.purple,
+              ),
+
+              const SizedBox(height: 40),
+            ],
           ),
-          const SizedBox(height: 60),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  /// ====== PROFILE CONTENT ======
+  // ================= PROFILE CONTENT =================
+
   Future<UserModel?> _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userString = prefs.getString('user');
@@ -148,16 +164,16 @@ class _HomeState extends State<Home> {
 
         final user = snapshot.data;
 
-        return Center(
+        return Padding(
+          padding: const EdgeInsets.all(20),
           child: Container(
-            width: 350,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withOpacity(0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 5),
                 ),
@@ -175,14 +191,17 @@ class _HomeState extends State<Home> {
                 Text(
                   user?.name ?? 'User',
                   style: GoogleFonts.poppins(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   user?.email ?? '-',
-                  style: GoogleFonts.poppins(color: Colors.black54),
+                  style: GoogleFonts.poppins(
+                    color: Colors.black54,
+                    fontSize: 13,
+                  ),
                 ),
                 const SizedBox(height: 25),
                 ElevatedButton(
@@ -217,51 +236,68 @@ class _HomeState extends State<Home> {
     );
   }
 
-  /// ====== FEATURE CARD ======
+  // ================= FEATURE CARD =================
+
   Widget _buildFeatureCard(
     IconData icon,
     String title,
     String desc, {
-    Color iconColor = Colors.green,
-    double iconSize = 45,
+    Color iconColor = const Color(0xFF1AB673),
   }) {
     return Container(
-      width: 350,
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         children: [
-          Icon(icon, color: iconColor, size: iconSize),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
             ),
+            child: Icon(icon, color: iconColor),
           ),
-          const SizedBox(height: 8),
-          Text(
-            desc,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(color: Colors.black54, fontSize: 18),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  desc,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// ====== BUILD ======
+  // ================= BUILD =================
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -274,34 +310,79 @@ class _HomeState extends State<Home> {
           'FitLife.id',
           style: GoogleFonts.poppins(
             color: Colors.green,
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
       body: _getBody(),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        selectedLabelStyle: GoogleFonts.poppins(fontSize: 12),
-        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 12),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calculate),
-            label: 'Kalkulator',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu),
-            label: 'Menu',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.article), label: 'Artikel'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
-        ],
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(5, (index) {
+            final isActive = _selectedIndex == index;
+
+            final icons = [
+              Icons.home,
+              Icons.calculate,
+              Icons.restaurant_menu,
+              Icons.article,
+              Icons.person,
+            ];
+
+            final labels = ["Home", "BMI", "Menu", "Artikel", "Profil"];
+
+            return GestureDetector(
+              onTap: () => _onItemTapped(index),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isActive ? 16 : 8,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? const Color(0xFF1AB673).withOpacity(0.15)
+                      : null,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      icons[index],
+                      size: isActive ? 26 : 22,
+                      color: isActive ? const Color(0xFF1AB673) : Colors.grey,
+                    ),
+                    if (isActive) ...[
+                      const SizedBox(width: 6),
+                      Text(
+                        labels[index],
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1AB673),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
