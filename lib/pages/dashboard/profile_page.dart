@@ -30,6 +30,13 @@ class _ProfilePageState extends State<ProfilePage>
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
   DateTime? _birthDate;
+  bool _changingPassword = false;
+  final _currentPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _obscureCurrent = true;
+  bool _obscureNew = true;
+  bool _obscureConfirm = true;
 
   final Map<String, bool> _editing = {
     'username': false,
@@ -64,6 +71,9 @@ class _ProfilePageState extends State<ProfilePage>
     _phoneController.dispose();
     _heightController.dispose();
     _weightController.dispose();
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -888,52 +898,59 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   Widget _buildPasswordCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _cardBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _border),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: const Color(0xFFDCFCE7),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.lock_outline_rounded,
-                size: 18,
-                color: Color(0xFF15803D),
+    return GestureDetector(
+      onTap: _showPasswordDialog,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: _cardBg,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: _border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: const Color(0xFFDCFCE7),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.lock_outline_rounded,
+                  size: 18,
+                  color: Color(0xFF15803D),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Ubah Password',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: _textDark,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Ubah Password',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: _textDark,
+                    ),
                   ),
-                ),
-                Text(
-                  'Perbarui password akun kamu',
-                  style: GoogleFonts.inter(fontSize: 12, color: _textMuted),
-                ),
-              ],
+                  Text(
+                    'Perbarui password akun kamu',
+                    style: GoogleFonts.inter(fontSize: 12, color: _textMuted),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Icon(Icons.edit_outlined, size: 16, color: _textMuted),
-        ],
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: Color(0xFF9CA3AF),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -964,6 +981,241 @@ class _ProfilePageState extends State<ProfilePage>
           ],
         ),
       ),
+    );
+  }
+
+  void _showPasswordDialog() {
+    _currentPasswordController.clear();
+    _newPasswordController.clear();
+    _confirmPasswordController.clear();
+    _obscureCurrent = true;
+    _obscureNew = true;
+    _obscureConfirm = true;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE5E7EB),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                Text(
+                  'Ubah Password',
+                  style: GoogleFonts.manrope(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: _textDark,
+                  ),
+                ),
+                Text(
+                  'Masukkan password lama dan baru kamu',
+                  style: GoogleFonts.inter(fontSize: 13, color: _textMuted),
+                ),
+                const SizedBox(height: 24),
+
+                // Current password
+                _buildPasswordInput(
+                  controller: _currentPasswordController,
+                  label: 'Password Saat Ini',
+                  obscure: _obscureCurrent,
+                  onToggle: () =>
+                      setModalState(() => _obscureCurrent = !_obscureCurrent),
+                ),
+                const SizedBox(height: 16),
+
+                // New password
+                _buildPasswordInput(
+                  controller: _newPasswordController,
+                  label: 'Password Baru',
+                  obscure: _obscureNew,
+                  onToggle: () =>
+                      setModalState(() => _obscureNew = !_obscureNew),
+                ),
+                const SizedBox(height: 16),
+
+                // Confirm password
+                _buildPasswordInput(
+                  controller: _confirmPasswordController,
+                  label: 'Konfirmasi Password Baru',
+                  obscure: _obscureConfirm,
+                  onToggle: () =>
+                      setModalState(() => _obscureConfirm = !_obscureConfirm),
+                ),
+                const SizedBox(height: 24),
+
+                // Submit button
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: _changingPassword
+                        ? null
+                        : () async {
+                            if (_newPasswordController.text !=
+                                _confirmPasswordController.text) {
+                              _showErrorSnackBar(
+                                'Konfirmasi password tidak cocok',
+                              );
+                              return;
+                            }
+                            if (_newPasswordController.text.length < 8) {
+                              _showErrorSnackBar(
+                                'Password baru minimal 8 karakter',
+                              );
+                              return;
+                            }
+
+                            setModalState(() => _changingPassword = true);
+
+                            try {
+                              final token = await auth.getToken();
+                              final res = await http.patch(
+                                Uri.parse(
+                                  '${cfg.Config.baseUrl}/profile/password',
+                                ),
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                  'Authorization': 'Bearer $token',
+                                },
+                                body: jsonEncode({
+                                  'currentPassword':
+                                      _currentPasswordController.text,
+                                  'newPassword': _newPasswordController.text,
+                                }),
+                              );
+
+                              setModalState(() => _changingPassword = false);
+
+                              if (res.statusCode == 200) {
+                                Navigator.of(ctx).pop();
+                                _showSuccessSnackBar(
+                                  'Password berhasil diubah',
+                                );
+                              } else {
+                                final data = jsonDecode(res.body);
+                                _showErrorSnackBar(
+                                  data['message'] ?? 'Gagal mengubah password',
+                                );
+                              }
+                            } catch (e) {
+                              setModalState(() => _changingPassword = false);
+                              _showErrorSnackBar('Terjadi kesalahan koneksi');
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00FF66),
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: _changingPassword
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.black,
+                            ),
+                          )
+                        : Text(
+                            'Simpan Password',
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordInput({
+    required TextEditingController controller,
+    required String label,
+    required bool obscure,
+    required VoidCallback onToggle,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: _textDark,
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          obscureText: obscure,
+          style: GoogleFonts.inter(fontSize: 15, color: _textDark),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+            suffixIcon: GestureDetector(
+              onTap: onToggle,
+              child: Icon(
+                obscure
+                    ? Icons.visibility_off_rounded
+                    : Icons.visibility_rounded,
+                size: 20,
+                color: _textMuted,
+              ),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Color(0xFF00FF66), width: 2),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
