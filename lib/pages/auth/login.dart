@@ -18,31 +18,53 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
 
   void _handleLogin() async {
-    setState(() {
-      _isLoading = true;
-    });
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email dan password harus diisi.")),
+      );
+      return;
+    }
 
-    final user = await auth.login(
-      _emailController.text,
+    setState(() => _isLoading = true);
+
+    final result = await auth.login(
+      _emailController.text.trim(),
       _passwordController.text,
     );
 
     if (!mounted) return;
+    setState(() => _isLoading = false);
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (user != null) {
+    if (result['success'] == true) {
       Navigator.pushReplacementNamed(context, '/home');
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Login Berhasil!")));
+      ).showSnackBar(const SnackBar(content: Text("Login Berhasil! 🎉")));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login Gagal. Cek email/password.")),
-      );
+      _showErrorSnackBar(result['message'] ?? 'Login gagal.');
     }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(
+              Icons.error_outline_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: Colors.redAccent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
   }
 
   @override
@@ -442,17 +464,22 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // Ganti _buildSocialButton:
   Widget _buildSocialButton({required Widget icon, required String label}) {
     return OutlinedButton(
       onPressed: () async {
-        final user = await auth.loginWithGoogle();
+        // ← Ganti dari UserModel? ke Map
+        final result = await auth.loginWithGoogle();
 
-        if (user != null && mounted) {
+        if (!mounted) return;
+
+        if (result['success'] == true) {
           Navigator.pushReplacementNamed(context, '/home');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Login Google Berhasil! 🎉")),
+          );
         } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("Login Google gagal")));
+          _showErrorSnackBar(result['message'] ?? 'Login Google gagal.');
         }
       },
       style: OutlinedButton.styleFrom(

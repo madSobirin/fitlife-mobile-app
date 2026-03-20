@@ -5,7 +5,8 @@ import '../config/config.dart';
 import '../models/user_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-Future<UserModel?> login(String email, String password) async {
+// ── Login Manual ──
+Future<Map<String, dynamic>> login(String email, String password) async {
   final url = Uri.parse('${Config.baseUrl}/auth/login');
 
   try {
@@ -18,11 +19,9 @@ Future<UserModel?> login(String email, String password) async {
       body: jsonEncode({'email': email, 'password': password}),
     );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-      print('🔍 API Response data: $data');
-      print('🔍 User data: ${data['user']}');
+    final data = jsonDecode(response.body);
 
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final user = UserModel.fromJson({
         ...data['user'],
         'token': data['token'],
@@ -30,18 +29,25 @@ Future<UserModel?> login(String email, String password) async {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('user', jsonEncode(user.toJson()));
+      await prefs.setString('token', data['token']);
 
-      return user;
+      return {'success': true, 'user': user};
     } else {
-      return null;
+      // Ambil pesan error dari API
+      final message = data['message'] ?? 'Email atau password salah.';
+      return {'success': false, 'message': message};
     }
   } catch (e) {
-    print("Error: $e");
-    return null;
+    return {'success': false, 'message': 'Terjadi kesalahan koneksi.'};
   }
 }
 
-Future<UserModel?> register(String name, String email, String password) async {
+// ── Register ──
+Future<Map<String, dynamic>> register(
+  String name,
+  String email,
+  String password,
+) async {
   final url = Uri.parse('${Config.baseUrl}/auth/register');
 
   try {
@@ -54,86 +60,61 @@ Future<UserModel?> register(String name, String email, String password) async {
       body: jsonEncode({'name': name, 'email': email, 'password': password}),
     );
 
-    print('🔍 Register status: ${response.statusCode}');
-    print('🔍 Register body: ${response.body}');
+    final data = jsonDecode(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body);
+      // Register berhasil — ada token langsung
+      if (data['token'] != null) {
+        final user = UserModel.fromJson({
+          ...data['user'],
+          'token': data['token'],
+        });
 
-      // Handle different response structures:
-      // Case 1: { user: {...}, token: "..." }
-      // Case 2: { id, name, email, ... } (flat response)
-      // Case 3: { message: "...", user: {...} } (no token)
-      Map<String, dynamic> userData;
-      if (data['user'] != null && data['user'] is Map) {
-        userData = {...data['user'], 'token': data['token'] ?? ''};
-      } else if (data['id'] != null) {
-        userData = {...data, 'token': data['token'] ?? ''};
-      } else {
-        // Registration succeeded but no user data returned — build minimal
-        userData = {
-          'id': 0,
-          'name': name,
-          'email': email,
-          'role': data['role'] ?? 'user',
-          'token': data['token'] ?? '',
-        };
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user', jsonEncode(user.toJson()));
+        await prefs.setString('token', data['token']);
+
+        return {'success': true, 'user': user};
       }
-
-      final user = UserModel.fromJson(userData);
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user', jsonEncode(user.toJson()));
-
-      return user;
+      // Register berhasil tanpa token (perlu login)
+      return {'success': true, 'user': null};
     } else {
-      print('🔍 Register failed with status: ${response.statusCode}');
-      return null;
+      // Handle validation errors
+      if (data['errors'] != null) {
+        final errors = data['errors'] as Map<String, dynamic>;
+        final firstError = errors.values.first;
+        final message = firstError is List
+            ? firstError.first
+            : firstError.toString();
+        return {'success': false, 'message': message};
+      }
+      final message = data['message'] ?? 'Registrasi gagal.';
+      return {'success': false, 'message': message};
     }
   } catch (e) {
-    print("Register Error: $e");
-    return null;
+    return {'success': false, 'message': 'Terjadi kesalahan koneksi.'};
   }
 }
 
-Future<UserModel?> loginWithGoogle() async {
+// ── Login Google ──
+Future<Map<String, dynamic>> loginWithGoogle() async {
   try {
-    // TODO: Replace with your Web Client ID from Google Cloud Console
-    // Go to: https://console.cloud.google.com → APIs & Services → Credentials
-    // Copy the "Web application" OAuth 2.0 Client ID
     final GoogleSignIn googleSignIn = GoogleSignIn(
       scopes: ['email', 'profile'],
       serverClientId: Config.googleClientId,
     );
 
-    print('🔍 Google Sign-In: Starting sign in...');
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
     if (googleUser == null) {
-      print('🔍 Google Sign-In: User cancelled sign in');
-      return null;
+      return {'success': false, 'message': 'Login dibatalkan.'};
     }
-
-    print('🔍 Google Sign-In: Got user: ${googleUser.email}');
 
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
-
     final idToken = googleAuth.idToken;
-    final accessToken = googleAuth.accessToken;
-
-    print(
-      '🔍 Google Sign-In: idToken is ${idToken != null ? "present" : "NULL"}',
-    );
-    print(
-      '🔍 Google Sign-In: accessToken is ${accessToken != null ? "present" : "NULL"}',
-    );
 
     if (idToken == null) {
-      print(
-        '❌ Google Sign-In: idToken is null! You need to set serverClientId in GoogleSignIn()',
-      );
-      return null;
+      return {'success': false, 'message': 'Gagal mendapatkan token Google.'};
     }
 
     final response = await http.post(
@@ -145,12 +126,9 @@ Future<UserModel?> loginWithGoogle() async {
       body: jsonEncode({'id_token': idToken}),
     );
 
-    print('🔍 Google Sign-In: API response status: ${response.statusCode}');
-    print('🔍 Google Sign-In: API response body: ${response.body}');
+    final data = jsonDecode(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-
       final user = UserModel.fromJson({
         ...data['user'],
         'token': data['token'],
@@ -158,15 +136,58 @@ Future<UserModel?> loginWithGoogle() async {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('user', jsonEncode(user.toJson()));
+      await prefs.setString('token', data['token']);
 
-      return user;
+      return {'success': true, 'user': user};
     } else {
-      print('❌ Google Sign-In: API failed with status ${response.statusCode}');
-      return null;
+      return {
+        'success': false,
+        'message': data['message'] ?? 'Login Google gagal.',
+      };
     }
-  } catch (e, stackTrace) {
-    print('❌ Google Sign-In Error: $e');
-    print('❌ Google Sign-In StackTrace: $stackTrace');
+  } catch (e) {
+    return {'success': false, 'message': 'Terjadi kesalahan: $e'};
+  }
+}
+
+// ── Logout ──
+Future<void> logout() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    // Hit logout API
+    if (token != null) {
+      await http.post(
+        Uri.parse('${Config.baseUrl}/auth/logout'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+    }
+  } catch (_) {}
+
+  // Hapus local storage
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('user');
+  await prefs.remove('token');
+}
+
+// ── Get current user dari local storage ──
+Future<UserModel?> getCurrentUser() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString('user');
+    if (userJson == null) return null;
+    return UserModel.fromJson(jsonDecode(userJson));
+  } catch (_) {
     return null;
   }
+}
+
+// ── Get token ──
+Future<String?> getToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('token');
 }

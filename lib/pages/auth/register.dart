@@ -83,26 +83,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      _showErrorDialog('Semua field harus diisi.');
+      return;
+    }
 
-    final user = await auth.register(
-      _nameController.text,
-      _emailController.text,
+    setState(() => _isLoading = true);
+
+    final result = await auth.register(
+      _nameController.text.trim(),
+      _emailController.text.trim(),
       _passwordController.text,
     );
 
     if (!mounted) return;
+    setState(() => _isLoading = false);
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (user != null) {
+    if (result['success'] == true) {
       _showSuccessDialog();
     } else {
-      _showErrorDialog('Registrasi gagal. Silakan coba lagi.');
+      _showErrorDialog(result['message'] ?? 'Registrasi gagal.');
     }
   }
 
@@ -779,14 +781,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildSocialButton({required Widget icon, required String label}) {
     return OutlinedButton(
       onPressed: () async {
-        final user = await auth.loginWithGoogle();
+        final result = await auth.loginWithGoogle();
 
-        if (user != null && mounted) {
+        if (!mounted) return;
+
+        if (result['success'] == true) {
           Navigator.pushReplacementNamed(context, '/home');
         } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("Login Google gagal")));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result['message'] ?? 'Login Google gagal')),
+          );
         }
       },
       style: OutlinedButton.styleFrom(
