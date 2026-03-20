@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/auth/login.dart';
 import 'pages/auth/register.dart';
-import 'pages/dashboard/profile.dart';
+import 'pages/dashboard/profile_page.dart';
 import 'pages/splash/onboarding.dart';
 
 void main() {
