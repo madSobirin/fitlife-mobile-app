@@ -1,6 +1,4 @@
-// ignore_for_file: deprecated_member_use
-
-import 'package:fitlife/services/auth_services.dart' as auth;
+import 'package:fitlife/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,6 +11,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final AuthServices _authServices = AuthServices();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -21,7 +20,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscurePassword = true;
   bool _agreedToTerms = false;
 
-  // Password strength: 0 = empty, 1 = weak, 2 = medium, 3 = strong
   int get _passwordStrength {
     final password = _passwordController.text;
     if (password.isEmpty) return 0;
@@ -40,40 +38,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String get _strengthLabel {
     switch (_passwordStrength) {
-      case 1:
-        return 'Weak';
-      case 2:
-        return 'Medium';
-      case 3:
-        return 'Strong';
-      default:
-        return '';
+      case 1: return 'Weak';
+      case 2: return 'Medium';
+      case 3: return 'Strong';
+      default: return '';
     }
   }
 
   Color get _strengthColor {
     switch (_passwordStrength) {
-      case 1:
-        return const Color(0xFF00FF66);
-      case 2:
-        return const Color(0xFF00FF66);
-      case 3:
-        return const Color(0xFF00FF66);
-      default:
-        return const Color(0xFFE5E7EB);
+      case 1: case 2: case 3: return const Color(0xFF00FF66);
+      default: return const Color(0xFFE5E7EB);
     }
   }
 
   Color get _strengthLabelColor {
     switch (_passwordStrength) {
-      case 1:
-        return const Color(0xFF00CC52);
-      case 2:
-        return const Color(0xFFF59E0B);
-      case 3:
-        return const Color(0xFF10B981);
-      default:
-        return const Color(0xFF9CA3AF);
+      case 1: return const Color(0xFF00CC52);
+      case 2: return const Color(0xFFF59E0B);
+      case 3: return const Color(0xFF10B981);
+      default: return const Color(0xFF9CA3AF);
     }
   }
 
@@ -82,7 +66,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _showErrorDialog('Harap setujui Terms & Conditions terlebih dahulu.');
       return;
     }
-
     if (_nameController.text.isEmpty ||
         _emailController.text.isEmpty ||
         _passwordController.text.isEmpty) {
@@ -91,8 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     setState(() => _isLoading = true);
-
-    final result = await auth.register(
+    final result = await _authServices.register(
       _nameController.text.trim(),
       _emailController.text.trim(),
       _passwordController.text,
@@ -109,6 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _showSuccessDialog() {
+    if (!mounted) return;
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
@@ -134,7 +117,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Animated checkmark circle
                   TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0.0, end: 1.0),
                     duration: const Duration(milliseconds: 600),
@@ -147,7 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       height: 72,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFF00FF66).withOpacity(0.15),
+                        color: const Color(0xFF00FF66).withValues(alpha: 0.15),
                       ),
                       child: const Center(
                         child: Icon(
@@ -184,7 +166,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop(); // close dialog
+                        Navigator.of(context).pop();
                         Navigator.pushReplacementNamed(context, '/login');
                       },
                       style: ElevatedButton.styleFrom(
@@ -226,6 +208,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _showErrorDialog(String message) {
+    if (!mounted) return;
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -330,16 +313,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: const Color(0xFFF8FFFA),
       body: Stack(
         children: [
-          // Decorative background blobs
           Positioned(
             top: -80,
             right: -80,
             child: Container(
               width: 260,
               height: 260,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0x1A00FF66),
+                color: const Color(0xFF00FF66).withValues(alpha: 0.1),
               ),
             ),
           ),
@@ -349,28 +331,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Container(
               width: 200,
               height: 200,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0x0D3B82F6),
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.05),
               ),
             ),
           ),
-
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
                   _buildHeader(),
                   const SizedBox(height: 40),
-
-                  // Title
                   _buildTitle(),
                   const SizedBox(height: 8),
-
-                  // Subtitle
                   Text(
                     'Create your profile to access elite tracking and coaching.',
                     style: GoogleFonts.inter(
@@ -380,8 +356,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   const SizedBox(height: 28),
-
-                  // Full Name Field
                   _buildLabel('Full Name'),
                   const SizedBox(height: 6),
                   _buildTextField(
@@ -390,8 +364,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     icon: Icons.person_rounded,
                   ),
                   const SizedBox(height: 20),
-
-                  // Email Field
                   _buildLabel('Email Address'),
                   const SizedBox(height: 6),
                   _buildTextField(
@@ -401,38 +373,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 20),
-
-                  // Password Field
                   _buildLabel('Password'),
                   const SizedBox(height: 6),
                   _buildPasswordField(),
                   const SizedBox(height: 10),
-
-                  // Password Strength Indicator
                   _buildPasswordStrength(),
                   const SizedBox(height: 20),
-
-                  // Terms & Conditions
                   _buildTermsCheckbox(),
                   const SizedBox(height: 24),
-
-                  // Create Account Button
                   _buildRegisterButton(),
                   const SizedBox(height: 32),
-
-                  // Divider
                   _buildDivider(),
                   const SizedBox(height: 32),
-
-                  // Social Buttons
                   _buildSocialButtons(),
                   const SizedBox(height: 32),
-
-                  // Footer
                   _buildFooter(),
                   const SizedBox(height: 40),
-
-                  // Bottom tagline
                   _buildTagline(),
                   const SizedBox(height: 16),
                 ],
@@ -781,10 +737,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildSocialButton({required Widget icon, required String label}) {
     return OutlinedButton(
       onPressed: () async {
-        final result = await auth.loginWithGoogle();
-
+        final result = await _authServices.loginWithGoogle();
         if (!mounted) return;
-
         if (result['success'] == true) {
           Navigator.pushReplacementNamed(context, '/home');
         } else {
@@ -846,50 +800,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildTagline() {
-    return Center(
-      child: Column(
-        children: [
-          // Badge
-          // Container(
-          //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          //   decoration: BoxDecoration(
-          //     color: const Color(0xFFDCFCE7),
-          //     borderRadius: BorderRadius.circular(20),
-          //   ),
-          // child: Row(
-          //   mainAxisSize: MainAxisSize.min,
-          //   children: [
-          //     const Icon(
-          //       Icons.bolt_rounded,
-          //       size: 14,
-          //       color: Color(0xFF15803D),
-          //     ),
-          //     const SizedBox(width: 4),
-          //     Text(
-          //       'NEXT GEN PERFORMANCE',
-          //       style: GoogleFonts.inter(
-          //         fontSize: 11,
-          //         fontWeight: FontWeight.w700,
-          //         color: const Color(0xFF15803D),
-          //         letterSpacing: 1.2,
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          // ),
-          // const SizedBox(height: 12),
-          // Text(
-          //   'Design your body.\nDefy your limits.',
-          //   textAlign: TextAlign.center,
-          //   style: GoogleFonts.manrope(
-          //     fontSize: 18,
-          //     fontWeight: FontWeight.w800,
-          //     color: const Color(0xFF111827),
-          //     height: 1.4,
-          //   ),
-          // ),
-        ],
-      ),
-    );
+    return Center(child: Column(children: []));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
+import '../../services/perhitungan_service.dart';
 
 class BmiPage extends StatefulWidget {
   final VoidCallback onBack;
@@ -11,6 +12,9 @@ class BmiPage extends StatefulWidget {
 }
 
 class _BmiPageState extends State<BmiPage> {
+  final PerhitunganService _perhitunganService = PerhitunganService();
+  bool _isLoading = false;
+
   String gender = "Pria";
   double height = 170;
   double weight = 65;
@@ -36,6 +40,31 @@ class _BmiPageState extends State<BmiPage> {
       bmiResult = bmi;
       kategori = hasilKategori;
     });
+  }
+
+  Future<void> simpanHasil() async {
+    if (bmiResult == null) return;
+
+    setState(() => _isLoading = true);
+    try {
+      await _perhitunganService.hitungBMI(
+        tinggiBadan: height,
+        beratBadan: weight,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Hasil perhitungan berhasil disimpan!")),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Gagal menyimpan: $e")),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Color kategoriColor() {
@@ -322,6 +351,35 @@ class _BmiPageState extends State<BmiPage> {
                       color: Colors.black87,
                     ),
                   ),
+
+                  const SizedBox(height: 20),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: _isLoading ? null : simpanHasil,
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFF1AB673)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF1AB673)),
+                            )
+                          : Text(
+                              "Simpan Hasil ke Riwayat",
+                              style: GoogleFonts.poppins(
+                                color: const Color(0xFF1AB673),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -331,3 +389,4 @@ class _BmiPageState extends State<BmiPage> {
     );
   }
 }
+

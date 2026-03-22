@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'package:fitlife/models/user_model.dart';
-import 'package:fitlife/services/auth_services.dart' as auth;
+import 'package:fitlife/services/auth_services.dart';
+import 'package:fitlife/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'package:fitlife/config/config.dart' as cfg;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,6 +17,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
+  final AuthServices _authServices = AuthServices();
+  final ApiService _apiService = ApiService();
+  
   UserModel? _user;
   bool _loading = true;
   bool _savingField = false;
@@ -82,44 +84,29 @@ class _ProfilePageState extends State<ProfilePage>
     setState(() => _loading = true);
 
     try {
-      final token = await auth.getToken();
-      if (token == null) {
-        setState(() => _loading = false);
-        return;
-      }
+      final response = await _apiService.get('/profile');
+      final data = _apiService.handleResponse(response);
+      
+      final userData = data['user'] ?? data;
+      final token = await _authServices.getToken();
+      final user = UserModel.fromJson({...userData, 'token': token});
 
-      final res = await http.get(
-        Uri.parse('${cfg.Config.baseUrl}/profile'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      // Update SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user', jsonEncode(user.toJson()));
 
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        final userData = data['user'] ?? data;
-        final user = UserModel.fromJson({...userData, 'token': token});
-
-        // Update SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user', jsonEncode(user.toJson()));
-
-        setState(() {
-          _user = user;
-          _usernameController.text = user.username ?? '';
-          _phoneController.text = user.phone ?? '';
-          _heightController.text = user.height?.toString() ?? '';
-          _weightController.text = user.weight?.toString() ?? '';
-          if (user.birthdate != null) {
-            _birthDate = DateTime.tryParse(user.birthdate!);
-          }
-          _loading = false;
-        });
-        _fadeController.forward();
-      } else {
-        setState(() => _loading = false);
-      }
+      setState(() {
+        _user = user;
+        _usernameController.text = user.username ?? '';
+        _phoneController.text = user.phone ?? '';
+        _heightController.text = user.height?.toString() ?? '';
+        _weightController.text = user.weight?.toString() ?? '';
+        if (user.birthdate != null) {
+          _birthDate = DateTime.tryParse(user.birthdate!);
+        }
+        _loading = false;
+      });
+      _fadeController.forward();
     } catch (e) {
       setState(() => _loading = false);
     }
@@ -130,10 +117,6 @@ class _ProfilePageState extends State<ProfilePage>
     setState(() => _savingField = true);
 
     try {
-      final token = await auth.getToken();
-      if (token == null) return;
-
-      // Map field name ke key API sesuai UpdateProfileRequest
       final Map<String, dynamic> body = {};
       switch (field) {
         case 'username':
@@ -149,56 +132,38 @@ class _ProfilePageState extends State<ProfilePage>
           body['weight'] = int.tryParse(value.toString());
           break;
         case 'birthdate':
-          body['birthdate'] = DateFormat(
-            'yyyy-MM-dd',
-          ).format(value as DateTime);
+          body['birthdate'] = DateFormat('yyyy-MM-dd').format(value as DateTime);
           break;
       }
 
-      final res = await http.patch(
-        Uri.parse('${cfg.Config.baseUrl}/profile'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(body),
-      );
+      final response = await _apiService.patch('/profile', body);
+      final data = _apiService.handleResponse(response);
+      final userData = data['user'] ?? data;
+      final token = await _authServices.getToken();
+      final user = UserModel.fromJson({...userData, 'token': token});
 
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        final userData = data['user'] ?? data;
-        final user = UserModel.fromJson({...userData, 'token': token});
+      // Update local storage
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user', jsonEncode(user.toJson()));
 
-        // Update local storage
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user', jsonEncode(user.toJson()));
+      setState(() {
+        _user = user;
+        _editing[field] = false;
+        _savingField = false;
+      });
 
-        setState(() {
-          _user = user;
-          _editing[field] = false;
-          _savingField = false;
-        });
-
-        if (!mounted) return;
-        _showSuccessSnackBar('Berhasil disimpan');
-      } else {
-        final data = jsonDecode(res.body);
-        setState(() {
-          _editing[field] = false;
-          _savingField = false;
-        });
-        if (!mounted) return;
-        _showErrorSnackBar(data['message'] ?? 'Gagal menyimpan');
-      }
+      if (!mounted) return;
+      _showSuccessSnackBar('Berhasil disimpan');
     } catch (e) {
       setState(() {
         _editing[field] = false;
         _savingField = false;
       });
       if (!mounted) return;
-      _showErrorSnackBar('Terjadi kesalahan koneksi');
+      _showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
     }
   }
+
 
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -377,7 +342,7 @@ class _ProfilePageState extends State<ProfilePage>
     );
 
     if (confirm != true) return;
-    await auth.logout();
+    await _authServices.logout();
     if (!mounted) return;
     Navigator.pushReplacementNamed(
       context,
@@ -1093,37 +1058,33 @@ class _ProfilePageState extends State<ProfilePage>
                             setModalState(() => _changingPassword = true);
 
                             try {
-                              final token = await auth.getToken();
-                              final res = await http.patch(
-                                Uri.parse(
-                                  '${cfg.Config.baseUrl}/profile/password',
-                                ),
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                  'Authorization': 'Bearer $token',
-                                },
-                                body: jsonEncode({
+                              final res = await _apiService.patch(
+                                '/profile/password',
+                                {
                                   'currentPassword':
                                       _currentPasswordController.text,
                                   'newPassword': _newPasswordController.text,
-                                }),
+                                },
                               );
 
                               setModalState(() => _changingPassword = false);
 
                               if (res.statusCode == 200) {
+                                if (!mounted) return;
                                 Navigator.of(ctx).pop();
                                 _showSuccessSnackBar(
                                   'Password berhasil diubah',
                                 );
                               } else {
                                 final data = jsonDecode(res.body);
+                                if (!mounted) return;
                                 _showErrorSnackBar(
                                   data['message'] ?? 'Gagal mengubah password',
                                 );
                               }
                             } catch (e) {
                               setModalState(() => _changingPassword = false);
+                              if (!mounted) return;
                               _showErrorSnackBar('Terjadi kesalahan koneksi');
                             }
                           },

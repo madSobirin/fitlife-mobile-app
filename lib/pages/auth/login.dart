@@ -1,4 +1,4 @@
-import 'package:fitlife/services/auth_services.dart' as auth;
+import 'package:fitlife/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,13 +11,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final AuthServices _authServices = AuthServices();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
 
-  // ── Tambah initState di sini ──
   @override
   void initState() {
     super.initState();
@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    final result = await auth.login(
+    final result = await _authServices.login(
       _emailController.text.trim(),
       _passwordController.text,
     );
@@ -86,6 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showErrorSnackBar(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -120,7 +121,6 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: const Color(0xFFF8FFFA),
       body: Stack(
         children: [
-          // Decorative background blobs
           Positioned(
             top: -80,
             right: -80,
@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 260,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0x1A00FF66),
+                color: const Color(0xFF00FF66).withValues(alpha: 0.1),
               ),
             ),
           ),
@@ -141,30 +141,22 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0x0D3B82F6),
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.05),
               ),
             ),
           ),
-
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
                   _buildHeader(),
                   const SizedBox(height: 48),
-
-                  // Badge
                   _buildBadge(),
                   const SizedBox(height: 16),
-
-                  // Title
                   _buildTitle(),
                   const SizedBox(height: 8),
-
-                  // Subtitle
                   Text(
                     'Enter your credentials to access your elite tracking dashboard.',
                     style: GoogleFonts.inter(
@@ -174,20 +166,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 32),
-
-                  // Email Field
                   _buildLabel('Email Address'),
                   const SizedBox(height: 6),
                   _buildEmailField(),
                   const SizedBox(height: 20),
-
-                  // Password Field
                   _buildLabel('Password'),
                   const SizedBox(height: 6),
                   _buildPasswordField(),
                   const SizedBox(height: 12),
-
-                  // Forgot Password
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
@@ -203,20 +189,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
-                  // Login Button
                   _buildLoginButton(),
                   const SizedBox(height: 32),
-
-                  // Divider
                   _buildDivider(),
                   const SizedBox(height: 32),
-
-                  // Social Buttons
                   _buildSocialButtons(),
                   const SizedBox(height: 32),
-
-                  // Footer
                   _buildFooter(),
                 ],
               ),
@@ -504,15 +482,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Ganti _buildSocialButton:
   Widget _buildSocialButton({required Widget icon, required String label}) {
     return OutlinedButton(
       onPressed: () async {
-        // ← Ganti dari UserModel? ke Map
-        final result = await auth.loginWithGoogle();
-
+        final result = await _authServices.loginWithGoogle();
         if (!mounted) return;
-
         if (result['success'] == true) {
           Navigator.pushReplacementNamed(context, '/home');
           ScaffoldMessenger.of(context).showSnackBar(

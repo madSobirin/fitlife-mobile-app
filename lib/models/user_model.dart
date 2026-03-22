@@ -30,8 +30,9 @@ class UserModel {
   });
 
   static String _toString(dynamic value, [String fallback = '']) {
-    if (value is List)
+    if (value is List) {
       return value.isNotEmpty ? value.first.toString() : fallback;
+    }
     return value?.toString() ?? fallback;
   }
 
