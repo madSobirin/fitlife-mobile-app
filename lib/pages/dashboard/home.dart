@@ -145,6 +145,7 @@ class _HomeState extends State<Home> {
                 'Hitung indeks massa tubuh anda.',
                 Colors.orange,
                 isSmall,
+                onTap: () => _onItemTapped(1),
               ),
               const SizedBox(height: 16),
 
@@ -154,6 +155,7 @@ class _HomeState extends State<Home> {
                 'Temukan berbagai pilihan menu sehat.',
                 Colors.pink,
                 isSmall,
+                onTap: () => _onItemTapped(2),
               ),
               const SizedBox(height: 16),
 
@@ -163,6 +165,7 @@ class _HomeState extends State<Home> {
                 'Baca artikel dan tips diet sehat.',
                 Colors.blue,
                 isSmall,
+                onTap: () => _onItemTapped(3),
               ),
               const SizedBox(height: 16),
 
@@ -172,6 +175,7 @@ class _HomeState extends State<Home> {
                 'Kelola informasi pribadi anda.',
                 Colors.purple,
                 isSmall,
+                onTap: () => _onItemTapped(4),
               ),
 
               const SizedBox(height: 50),
@@ -189,57 +193,61 @@ class _HomeState extends State<Home> {
     String title,
     String desc,
     Color iconColor,
-    bool isSmall,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(isSmall ? 16 : 22),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF00FF66).withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: isSmall ? 48 : 55,
-            height: isSmall ? 48 : 55,
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(18),
+    bool isSmall, {
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(isSmall ? 16 : 22),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF00FF66).withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
-            child: Icon(icon, color: iconColor, size: isSmall ? 22 : 26),
-          ),
-          const SizedBox(width: 18),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
-                    fontSize: isSmall ? 14 : 16,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  desc,
-                  style: GoogleFonts.poppins(
-                    fontSize: isSmall ? 12 : 13,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: isSmall ? 48 : 55,
+              height: isSmall ? 48 : 55,
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Icon(icon, color: iconColor, size: isSmall ? 22 : 26),
             ),
-          ),
-          Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey[400]),
-        ],
+            const SizedBox(width: 18),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      fontSize: isSmall ? 14 : 16,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    desc,
+                    style: GoogleFonts.poppins(
+                      fontSize: isSmall ? 12 : 13,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey[400]),
+          ],
+        ),
       ),
     );
   }
