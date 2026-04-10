@@ -228,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(width: 8),
             Text(
-              'FitTech',
+              'Fitlife.id',
               style: GoogleFonts.manrope(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
@@ -280,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           const TextSpan(text: 'Welcome Back,\n'),
           TextSpan(
-            text: 'Athlete.',
+            text: "Let's Get Started.",
             style: GoogleFonts.manrope(
               fontSize: 32,
               fontWeight: FontWeight.w800,

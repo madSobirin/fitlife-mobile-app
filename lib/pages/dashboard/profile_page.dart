@@ -531,7 +531,7 @@ class _ProfilePageState extends State<ProfilePage>
         ),
         const SizedBox(width: 8),
         Text(
-          'FitTech',
+          'Fitlife.id',
           style: GoogleFonts.manrope(
             fontSize: 20,
             fontWeight: FontWeight.w800,

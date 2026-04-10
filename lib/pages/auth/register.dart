@@ -420,7 +420,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         const SizedBox(width: 8),
         Text(
-          'FitTech',
+          'Fitlife.id',
           style: GoogleFonts.manrope(
             fontSize: 20,
             fontWeight: FontWeight.w800,

@@ -157,7 +157,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'FitTech',
+                            'Fitlife.id',
                             style: GoogleFonts.manrope(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
