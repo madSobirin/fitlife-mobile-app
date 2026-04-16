@@ -28,7 +28,10 @@ class AuthServices {
 
       return {'success': true, 'user': user};
     } catch (e) {
-      return {'success': false, 'message': e.toString().replaceFirst('Exception: ', '')};
+      return {
+        'success': false,
+        'message': e.toString().replaceFirst('Exception: ', ''),
+      };
     }
   }
 
@@ -63,13 +66,19 @@ class AuthServices {
       // Register berhasil tanpa token (perlu login)
       return {'success': true, 'user': null};
     } catch (e) {
-      return {'success': false, 'message': e.toString().replaceFirst('Exception: ', '')};
+      return {
+        'success': false,
+        'message': e.toString().replaceFirst('Exception: ', ''),
+      };
     }
   }
 
   // ── Login Google ──
   Future<Map<String, dynamic>> loginWithGoogle() async {
     try {
+      print('=== DEBUG GOOGLE SIGN-IN ===');
+      print('1. serverClientId: ${Config.googleClientId}');
+
       final GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: ['email', 'profile'],
         serverClientId: Config.googleClientId,
