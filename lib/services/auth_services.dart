@@ -77,26 +77,31 @@ class AuthServices {
   Future<Map<String, dynamic>> loginWithGoogle() async {
     try {
       print('=== DEBUG GOOGLE SIGN-IN ===');
-      print('1. serverClientId: ${Config.googleClientId}');
+      print('1. Web Client ID (serverClientId): ${Config.googleClientId}');
 
       final GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: ['email', 'profile'],
         serverClientId: Config.googleClientId,
       );
 
+      print('2. Memulai googleSignIn.signIn()...');
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
+        print('3. User membatalkan login.');
         return {'success': false, 'message': 'Login dibatalkan.'};
       }
+      print('3. Google user diperoleh: ${googleUser.email}');
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final idToken = googleAuth.idToken;
+      print('4. idToken: ${idToken != null ? "ADA (${idToken.substring(0, 20)}...)" : "NULL"}');
 
       if (idToken == null) {
         return {'success': false, 'message': 'Gagal mendapatkan token Google.'};
       }
 
+      print('5. Mengirim idToken ke backend...');
       final response = await _api.post('/auth/google', {'id_token': idToken});
       final data = _api.handleResponse(response);
 
@@ -109,8 +114,10 @@ class AuthServices {
       await prefs.setString('user', jsonEncode(user.toJson()));
       await prefs.setString('token', data['token']);
 
+      print('6. Login Google BERHASIL!');
       return {'success': true, 'user': user};
     } catch (e) {
+      print('!!! ERROR GOOGLE SIGN-IN: $e');
       return {'success': false, 'message': 'Terjadi kesalahan: $e'};
     }
   }
