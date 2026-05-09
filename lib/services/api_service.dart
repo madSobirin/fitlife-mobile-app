@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http_parser/http_parser.dart';
 import '../config/config.dart';
 
 class ApiService {
@@ -75,5 +76,27 @@ class ApiService {
     } else {
       throw Exception(data['message'] ?? 'Terjadi kesalahan pada server');
     }
+  }
+
+  Future<http.Response> postMultipart(String endpoint, String fileField, String filePath) async {
+    final token = await _getToken();
+    final url = Uri.parse('${Config.baseUrl}$endpoint');
+    
+    var request = http.MultipartRequest('POST', url);
+    
+    if (token != null) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+    
+    final ext = filePath.toLowerCase().endsWith('.png') ? 'png' : 'jpeg';
+    
+    request.files.add(await http.MultipartFile.fromPath(
+      fileField, 
+      filePath,
+      contentType: MediaType('image', ext),
+    ));
+    
+    final streamedResponse = await request.send();
+    return await http.Response.fromStream(streamedResponse);
   }
 }

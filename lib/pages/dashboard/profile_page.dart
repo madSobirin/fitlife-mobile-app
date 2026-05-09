@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -23,6 +24,7 @@ class _ProfilePageState extends State<ProfilePage>
   UserModel? _user;
   bool _loading = true;
   bool _savingField = false;
+  bool _uploadingAvatar = false;
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnim;
@@ -245,6 +247,53 @@ class _ProfilePageState extends State<ProfilePage>
     if (picked != null) {
       setState(() => _birthDate = picked);
       await _saveField('birthdate', picked);
+    }
+  }
+
+  Future<void> _pickAndUploadAvatar() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 50, // Kompres ukuran file (0-100)
+      maxWidth: 800, // Resize ukuran pixel maksimal
+      maxHeight: 800,
+    );
+
+    if (pickedFile == null) return;
+
+    setState(() => _uploadingAvatar = true);
+
+    try {
+      final response = await _apiService.postMultipart(
+        '/profile/upload', // Sesuai dengan app/api/profile/upload/route.ts di web
+        'photo',
+        pickedFile.path,
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final userData = data['user'] ?? data;
+        final token = await _authServices.getToken();
+        final user = UserModel.fromJson({...userData, 'token': token});
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user', jsonEncode(user.toJson()));
+
+        setState(() {
+          _user = user;
+          _uploadingAvatar = false;
+        });
+
+        if (!mounted) return;
+        _showSuccessSnackBar('Foto profil berhasil diperbarui');
+      } else {
+        throw Exception(data['message'] ?? 'Gagal mengupload foto');
+      }
+    } catch (e) {
+      setState(() => _uploadingAvatar = false);
+      if (!mounted) return;
+      _showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
     }
   }
 
@@ -555,49 +604,80 @@ class _ProfilePageState extends State<ProfilePage>
       ),
       child: Row(
         children: [
-          Stack(
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF00FF66).withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: const Color(0xFF00FF66).withOpacity(0.4),
-                    width: 1.5,
+          GestureDetector(
+            onTap: _uploadingAvatar ? null : _pickAndUploadAvatar,
+            child: Stack(
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00FF66).withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: const Color(0xFF00FF66).withOpacity(0.4),
+                      width: 1.5,
+                    ),
+                    image: _user?.photo != null
+                        ? DecorationImage(
+                            image: NetworkImage(_user!.photo!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
                   ),
+                  child: _user?.photo == null
+                      ? Center(
+                          child: Text(
+                            _initials,
+                            style: GoogleFonts.manrope(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                              color: _primaryDark,
+                            ),
+                          ),
+                        )
+                      : null,
                 ),
-                child: Center(
-                  child: Text(
-                    _initials,
-                    style: GoogleFonts.manrope(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: _primaryDark,
+                if (_uploadingAvatar)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black45,
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: _primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt_rounded,
+                        size: 10,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: _primary,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt_rounded,
-                    size: 10,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
