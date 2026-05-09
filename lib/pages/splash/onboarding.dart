@@ -144,20 +144,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             width: 34,
                             height: 34,
                             decoration: BoxDecoration(
-                              color: Colors.black,
+                              color: Colors.transparent,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Center(
-                              child: Icon(
-                                Icons.change_history_rounded,
-                                color: Color(0xFF00FF66),
-                                size: 18,
+                              child: Image(
+                                image: AssetImage("assets/images/logo.png"),
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'FitTech',
+                            'FitLife.id',
                             style: GoogleFonts.manrope(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
