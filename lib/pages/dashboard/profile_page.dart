@@ -19,7 +19,7 @@ class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   final AuthServices _authServices = AuthServices();
   final ApiService _apiService = ApiService();
-  
+
   UserModel? _user;
   bool _loading = true;
   bool _savingField = false;
@@ -86,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage>
     try {
       final response = await _apiService.get('/profile');
       final data = _apiService.handleResponse(response);
-      
+
       final userData = data['user'] ?? data;
       final token = await _authServices.getToken();
       final user = UserModel.fromJson({...userData, 'token': token});
@@ -132,7 +132,9 @@ class _ProfilePageState extends State<ProfilePage>
           body['weight'] = int.tryParse(value.toString());
           break;
         case 'birthdate':
-          body['birthdate'] = DateFormat('yyyy-MM-dd').format(value as DateTime);
+          body['birthdate'] = DateFormat(
+            'yyyy-MM-dd',
+          ).format(value as DateTime);
           break;
       }
 
@@ -163,7 +165,6 @@ class _ProfilePageState extends State<ProfilePage>
       _showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
     }
   }
-
 
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -518,20 +519,14 @@ class _ProfilePageState extends State<ProfilePage>
           width: 34,
           height: 34,
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Center(
-            child: Icon(
-              Icons.change_history_rounded,
-              color: Color(0xFF00FF66),
-              size: 18,
-            ),
-          ),
+          child: Center(child: Image.asset('assets/images/logo.png')),
         ),
         const SizedBox(width: 8),
         Text(
-          'FitTech',
+          'Fitlife.id',
           style: GoogleFonts.manrope(
             fontSize: 20,
             fontWeight: FontWeight.w800,
@@ -1058,14 +1053,12 @@ class _ProfilePageState extends State<ProfilePage>
                             setModalState(() => _changingPassword = true);
 
                             try {
-                              final res = await _apiService.patch(
-                                '/profile/password',
-                                {
-                                  'currentPassword':
-                                      _currentPasswordController.text,
-                                  'newPassword': _newPasswordController.text,
-                                },
-                              );
+                              final res = await _apiService
+                                  .patch('/profile/password', {
+                                    'currentPassword':
+                                        _currentPasswordController.text,
+                                    'newPassword': _newPasswordController.text,
+                                  });
 
                               setModalState(() => _changingPassword = false);
 
