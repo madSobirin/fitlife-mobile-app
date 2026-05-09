@@ -16,50 +16,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<OnboardingData> _pages = [
     OnboardingData(
-      badge: 'NEXT GEN PERFORMANCE',
-      badgeIcon: Icons.bolt_rounded,
-      title: 'Design your body.',
-      titleHighlight: 'Defy your limits.',
+      badge: 'ANALISA TUBUH',
+      badgeIcon: Icons.monitor_weight_rounded,
+      title: 'Kenali',
+      titleHighlight: 'Tubuhmu',
       subtitle:
-          'Create your profile to access elite tracking and coaching tailored to your unique biology.',
-      buttonText: 'Get Started',
+          'Ketahui status berat badan idealmu hanya dengan memasukkan tinggi dan berat badan secara presisi.',
+      buttonText: 'Lanjutkan',
       showSignIn: true,
-      visualType: VisualType.dumbbell,
+      visualType: VisualType.bmi,
     ),
     OnboardingData(
-      badge: 'REAL-TIME ANALYTICS',
-      badgeIcon: Icons.insights_rounded,
-      title: 'Track Your',
-      titleHighlight: 'Progress',
+      badge: 'NUTRISI TEPAT',
+      badgeIcon: Icons.restaurant_menu_rounded,
+      title: 'Makan Enak &',
+      titleHighlight: 'Tetap Sehat',
       subtitle:
-          'Visualize your journey with precision metrics. Watch yourself grow stronger every single day.',
-      buttonText: 'Next Step',
+          'Dapatkan rekomendasi menu diet harian lengkap dengan jumlah kalori dan resep masakan bergizi.',
+      buttonText: 'Selanjutnya',
       showSignIn: false,
-      visualType: VisualType.tracking,
+      visualType: VisualType.menu,
     ),
     OnboardingData(
-      badge: 'NEXT GEN PERFORMANCE',
-      badgeIcon: Icons.bolt_rounded,
-      title: 'Elite',
-      titleHighlight: 'Coaching',
+      badge: 'GAYA HIDUP',
+      badgeIcon: Icons.menu_book_rounded,
+      title: 'Tingkatkan',
+      titleHighlight: 'Pengetahuanmu',
       subtitle:
-          'Connect with world-class trainers and get real-time feedback on your biometric data.',
-      buttonText: 'Next',
-      showSignIn: false,
-      showBackButton: true,
-      visualType: VisualType.coaching,
-    ),
-    OnboardingData(
-      badge: 'GLOBAL NETWORK',
-      badgeIcon: Icons.groups_rounded,
-      title: 'Find Your',
-      titleHighlight: 'Tribe.',
-      subtitle:
-          'Connect with elite athletes, share your progress, and get motivated by a community that refuses to quit.',
-      buttonText: 'Get Started',
+          'Baca berbagai artikel inspiratif seputar gaya hidup sehat, nutrisi, dan tips berolahraga setiap hari.',
+      buttonText: 'Mulai Sekarang',
       showSignIn: true,
       signInText: 'Log In',
-      visualType: VisualType.community,
+      showBackButton: true,
+      visualType: VisualType.artikel,
     ),
   ];
 
@@ -305,29 +294,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildVisual(VisualType type) {
     switch (type) {
-      case VisualType.dumbbell:
-        return _buildDumbbellVisual();
-      case VisualType.tracking:
-        return _buildTrackingVisual();
-      case VisualType.coaching:
-        return _buildCoachingVisual();
-      case VisualType.community:
-        return _buildCommunityVisual();
+      case VisualType.bmi:
+        return _buildImageVisual(
+          'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=800&auto=format&fit=crop',
+        );
+      case VisualType.menu:
+        return _buildImageVisual(
+          'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800&auto=format&fit=crop',
+        );
+      case VisualType.artikel:
+        return _buildImageVisual(
+          'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=800&auto=format&fit=crop',
+        );
     }
   }
 
-  // ─── Visual 1: Dumbbell / Power ───
-  Widget _buildDumbbellVisual() {
+  Widget _buildImageVisual(String imageUrl) {
     return Container(
       width: double.infinity,
-      height: 280,
+      height: 320,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [const Color(0xFF1A1A2E), const Color(0xFF16213E)],
-        ),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF00FF66).withOpacity(0.15),
@@ -335,585 +322,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             offset: const Offset(0, 20),
           ),
         ],
-      ),
-      child: Stack(
-        children: [
-          // Glow effect
-          Positioned(
-            top: 40,
-            left: 40,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF00FF66).withOpacity(0.15),
-              ),
-            ),
-          ),
-          // Icon representation
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF00FF66).withOpacity(0.2),
-                  ),
-                  child: const Icon(
-                    Icons.fitness_center_rounded,
-                    size: 42,
-                    color: Color(0xFF00FF66),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'POWER',
-                  style: GoogleFonts.manrope(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white.withOpacity(0.6),
-                    letterSpacing: 4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Floating dots
-          Positioned(
-            top: 60,
-            right: 50,
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF00FF66),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 80,
-            left: 60,
-            child: Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.3),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ─── Visual 2: Tracking / Analytics ───
-  Widget _buildTrackingVisual() {
-    return Container(
-      width: double.infinity,
-      height: 300,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: const Color(0xFF0F2027),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF00FF66).withOpacity(0.12),
-            blurRadius: 40,
-            offset: const Offset(0, 20),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Gradient overlay
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Container(
-              width: 120,
-              height: 4,
-              margin: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(2),
-                color: const Color(0xFF00FF66),
-              ),
-            ),
-          ),
-          // Pace indicator
-          Positioned(
-            top: 80,
-            left: 24,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFF00FF66),
-                    ),
-                    child: const Icon(
-                      Icons.bolt_rounded,
-                      size: 18,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'CURRENT PACE',
-                        style: GoogleFonts.inter(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white.withOpacity(0.6),
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.manrope(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                          children: [
-                            const TextSpan(text: '4:32 '),
-                            TextSpan(
-                              text: '/km',
-                              style: GoogleFonts.inter(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white.withOpacity(0.5),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Graph line
-          Positioned(
-            bottom: 50,
-            right: 24,
-            child: SizedBox(
-              width: 120,
-              height: 50,
-              child: CustomPaint(painter: _GraphPainter()),
-            ),
-          ),
-          // Running man icon
-          Positioned(
-            bottom: 60,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Icon(
-                Icons.directions_run_rounded,
-                size: 60,
-                color: Colors.white.withOpacity(0.08),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ─── Visual 3: Coaching / Analytics Chart ───
-  Widget _buildCoachingVisual() {
-    return Container(
-      width: double.infinity,
-      height: 280,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE5E7EB)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 30,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Grid pattern
-          Positioned.fill(child: CustomPaint(painter: _GridPainter())),
-          // Bar chart
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                // BPM label
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '172 BPM',
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                // Bars
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _buildBar(0.30, false),
-                    const SizedBox(width: 10),
-                    _buildBar(0.50, false),
-                    const SizedBox(width: 10),
-                    _buildBar(0.75, true),
-                    const SizedBox(width: 10),
-                    _buildBar(0.95, true, isHighlight: true),
-                    const SizedBox(width: 10),
-                    _buildBar(0.60, true),
-                    const SizedBox(width: 10),
-                    _buildBar(0.40, false),
-                  ],
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
-          // Curve overlay
-          Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              height: 80,
-              child: CustomPaint(painter: _CurvePainter()),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBar(
-    double heightFactor,
-    bool isGreen, {
-    bool isHighlight = false,
-  }) {
-    final maxHeight = 120.0;
-    return Container(
-      width: 18,
-      height: maxHeight * heightFactor,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
-        color: isGreen
-            ? isHighlight
-                  ? const Color(0xFF00FF66)
-                  : const Color(0xFF00FF66).withOpacity(0.5)
-            : const Color(0xFFE5E7EB),
-        boxShadow: isHighlight
-            ? [
-                BoxShadow(
-                  color: const Color(0xFF00FF66).withOpacity(0.4),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
-      ),
-    );
-  }
-
-  // ─── Visual 4: Community ───
-  Widget _buildCommunityVisual() {
-    return Container(
-      width: double.infinity,
-      height: 300,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Main profile card
-          Container(
-            width: 200,
-            height: 250,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: const Color(0xFF1A1A2E),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 30,
-                  offset: const Offset(0, 15),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                // Cover area
-                Container(
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFF374151),
-                        const Color(0xFF1F2937),
-                      ],
-                    ),
-                  ),
-                ),
-                // Profile info
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      // Avatar
-                      Container(
-                        width: 48,
-                        height: 48,
-                        margin: const EdgeInsets.only(top: 0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFF00FF66),
-                            width: 2,
-                          ),
-                          color: const Color(0xFF374151),
-                        ),
-                        child: const Icon(
-                          Icons.person_rounded,
-                          color: Color(0xFF9CA3AF),
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Alex M.',
-                        style: GoogleFonts.manrope(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.emoji_events_rounded,
-                            size: 14,
-                            color: Color(0xFF00FF66),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Top 1% Performer',
-                            style: GoogleFonts.inter(
-                              fontSize: 11,
-                              color: const Color(0xFF9CA3AF),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Floating card - left
-          Positioned(
-            top: 30,
-            left: 0,
-            child: Transform.rotate(
-              angle: -0.15,
-              child: Container(
-                width: 110,
-                height: 80,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
-                  color: Colors.white,
-                  border: Border.all(color: const Color(0xFFE5E7EB)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 20,
-                          height: 20,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFF3B82F6),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Container(
-                          width: 40,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(3),
-                            color: const Color(0xFFE5E7EB),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Container(
-                      width: 70,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3),
-                        color: const Color(0xFFE5E7EB),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      width: 45,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3),
-                        color: const Color(0xFFE5E7EB),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // Floating card - right (member count)
-          Positioned(
-            bottom: 30,
-            right: 0,
-            child: Transform.rotate(
-              angle: 0.08,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
-                  color: Colors.white,
-                  border: Border.all(color: const Color(0xFFE5E7EB)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    // Stacked avatars
-                    SizedBox(
-                      width: 80,
-                      height: 32,
-                      child: Stack(
-                        children: [
-                          _buildMiniAvatar(0, const Color(0xFF3B82F6)),
-                          _buildMiniAvatar(20, const Color(0xFF8B5CF6)),
-                          Positioned(
-                            left: 40,
-                            child: Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: const Color(0xFF00FF66),
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '+2k',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Join 2,400+ Athletes',
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF374151),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMiniAvatar(double left, Color color) {
-    return Positioned(
-      left: left,
-      child: Container(
-        width: 28,
-        height: 28,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: color,
-          border: Border.all(color: Colors.white, width: 2),
+        image: DecorationImage(
+          image: NetworkImage(imageUrl),
+          fit: BoxFit.cover,
         ),
-        child: const Icon(Icons.person_rounded, size: 14, color: Colors.white),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
+          ),
+        ),
       ),
     );
   }
@@ -1077,7 +499,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
 // ─── Data Models ─────────────────────────
 
-enum VisualType { dumbbell, tracking, coaching, community }
+enum VisualType { bmi, menu, artikel }
 
 class OnboardingData {
   final String badge;
@@ -1103,101 +525,4 @@ class OnboardingData {
     this.signInText,
     this.showBackButton,
   });
-}
-
-// ─── Custom Painters ─────────────────────
-
-class _GraphPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF00FF66)
-      ..strokeWidth = 2.5
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final path = Path();
-    path.moveTo(0, size.height * 0.8);
-    path.quadraticBezierTo(
-      size.width * 0.25,
-      size.height * 0.6,
-      size.width * 0.4,
-      size.height * 0.5,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.6,
-      size.height * 0.3,
-      size.width * 0.75,
-      size.height * 0.25,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.9,
-      size.height * 0.15,
-      size.width,
-      size.height * 0.1,
-    );
-
-    canvas.drawPath(path, paint);
-
-    // Dot at end
-    canvas.drawCircle(
-      Offset(size.width, size.height * 0.1),
-      4,
-      Paint()..color = const Color(0xFF00FF66),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _GridPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF000000).withOpacity(0.03)
-      ..strokeWidth = 0.5;
-
-    const spacing = 20.0;
-    for (double x = 0; x < size.width; x += spacing) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-    for (double y = 0; y < size.height; y += spacing) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _CurvePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF00FF66).withOpacity(0.3)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final path = Path();
-    path.moveTo(0, size.height * 0.7);
-    path.quadraticBezierTo(
-      size.width * 0.25,
-      size.height * 0.3,
-      size.width * 0.5,
-      size.height * 0.5,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.75,
-      size.height * 0.7,
-      size.width,
-      size.height * 0.4,
-    );
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
