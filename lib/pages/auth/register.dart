@@ -38,26 +38,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String get _strengthLabel {
     switch (_passwordStrength) {
-      case 1: return 'Weak';
-      case 2: return 'Medium';
-      case 3: return 'Strong';
-      default: return '';
+      case 1:
+        return 'Weak';
+      case 2:
+        return 'Medium';
+      case 3:
+        return 'Strong';
+      default:
+        return '';
     }
   }
 
   Color get _strengthColor {
     switch (_passwordStrength) {
-      case 1: case 2: case 3: return const Color(0xFF00FF66);
-      default: return const Color(0xFFE5E7EB);
+      case 1:
+      case 2:
+      case 3:
+        return const Color(0xFF00FF66);
+      default:
+        return const Color(0xFFE5E7EB);
     }
   }
 
   Color get _strengthLabelColor {
     switch (_passwordStrength) {
-      case 1: return const Color(0xFF00CC52);
-      case 2: return const Color(0xFFF59E0B);
-      case 3: return const Color(0xFF10B981);
-      default: return const Color(0xFF9CA3AF);
+      case 1:
+        return const Color(0xFF00CC52);
+      case 2:
+        return const Color(0xFFF59E0B);
+      case 3:
+        return const Color(0xFF10B981);
+      default:
+        return const Color(0xFF9CA3AF);
     }
   }
 
@@ -407,20 +419,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
           width: 34,
           height: 34,
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Center(
-            child: Icon(
-              Icons.change_history_rounded,
-              color: Color(0xFF00FF66),
-              size: 18,
-            ),
+            child: Image(image: AssetImage("assets/images/logo.png")),
           ),
         ),
         const SizedBox(width: 8),
         Text(
-          'FitTech',
+          'FitLife.id',
           style: GoogleFonts.manrope(
             fontSize: 20,
             fontWeight: FontWeight.w800,
