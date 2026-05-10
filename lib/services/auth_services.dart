@@ -118,7 +118,19 @@ class AuthServices {
       return {'success': true, 'user': user};
     } catch (e) {
       print('!!! ERROR GOOGLE SIGN-IN: $e');
-      return {'success': false, 'message': 'Terjadi kesalahan: $e'};
+      final errorString = e.toString();
+      if (errorString.contains('network_error') || 
+          errorString.contains('ApiException: 7') || 
+          errorString.contains('Tidak ada koneksi internet')) {
+        return {
+          'success': false, 
+          'message': 'Tidak ada koneksi internet. Silakan periksa jaringan Anda.'
+        };
+      }
+      return {
+        'success': false, 
+        'message': errorString.replaceFirst('Exception: ', '')
+      };
     }
   }
 
